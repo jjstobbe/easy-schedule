@@ -1,14 +1,13 @@
-// TODO: Something with configs/keys
-// const config = require("./config.json");
-
 const Koa = require("koa");
-// const Router = require("koa-router");
 const serve = require("koa-static");
 const mount = require("koa-mount");
+const bodyParser = require("koa-bodyparser");
+const authRoutes = require('./routes/auth-routes');
+
+const passportSetup = require('./config/passport-setup');
 
 // for passport support
 // const session = require("koa-session");
-const bodyParser = require("koa-bodyparser");
 // const passport = require("koa-passport");
 
 const app = new Koa();
@@ -21,6 +20,8 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser());
 static_pages.use(serve(__dirname + "/../build")); //serve the build directory
 app.use(mount("/", static_pages));
+app.use(authRoutes.routes());
+app.use(authRoutes.allowedMethods());
 
 // authentication
 // app.use(passport.initialize());
