@@ -6,8 +6,9 @@
   "license": "MIT",
   "scripts": {
     "start": "node server/index.js",
-    "start-dev": "concurrently \"react-scripts start\" \"nodemon express-server/startServer.js\"",
-    "build": "react-scripts build",
+    "dev-frontend": "react-scripts start",
+    "dev-backend": "nodemon server/index.js",
+    "build-frontend": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -27,6 +28,7 @@
     "passport-google-oauth20": "^2.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1"
   },
   "devDependencies": {
