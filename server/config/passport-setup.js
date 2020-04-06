@@ -1,16 +1,42 @@
-const passport = require('koa-passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const keys = require('./keys');
+import passport from'koa-passport';
+import GoogleStrategy from 'passport-google-oauth20';
+import keys from './keys.js';
+import User from '../models/user-model.js';
 
-passport.use(
-    new GoogleStrategy({
-        // options for google strategy
+export default () => {
+  passport.serializeUser((user, done) => {
+    done(null, user.id);
+  });
+  
+  passport.deserializeUser((id, done) => {
+    User.findById(id, (err, user) => {
+        done(null, user);
+    });
+  });
+  
+  passport.use(
+    new GoogleStrategy(
+      {
         clientID: keys.google.clientID,
         clientSecret: keys.google.clientSecret,
-        callbackURL: '/auth/google/redirect'
-    }, (accessToken, refreshToken, profile, done) => {
-        // passport callback function
-        console.log('passport callback function fired:');
-        console.log(profile);
-    })
-);
+        callbackURL: '/auth/google/redirect',
+      },
+      (accessToken, refreshToken, profile, done) => {
+        User.findOne({ googleId: profile.id }).then((currentUser) => {
+          if (currentUser) {
+            done(null, currentUser);
+          } else {
+            new User({
+              googleId: profile.id,
+              refreshToken: refreshToken
+            })
+              .save()
+              .then((newUser) => {
+                done(null, newUser);
+              });
+          }
+        });
+      }
+    )
+  );
+}
