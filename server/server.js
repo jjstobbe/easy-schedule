@@ -1,3 +1,4 @@
+import React from 'react';
 import Koa from 'koa';
 import reactrouter from 'koa-react-router';
 import App from '../src/App.js';
@@ -10,8 +11,12 @@ import session from 'koa-session';
 import keys from './config/keys.js';
 import setupMongoose from './config/mongoose-setup.js';
 import setupPassport from './config/passport-setup.js';
+import * as assetManifest from '../build/asset-manifest.json';
+const serve = require("koa-static");
+const mount = require("koa-mount");
 
 const app = new Koa();
+const static_pages = new Koa();
 
 // Setup Scripts
 setupMongoose();
@@ -24,11 +29,27 @@ app.use(session(app));
 // app.use(session(app));
 app.use(bodyParser());
 
+const cssFileName = assetManifest.files["main.css"].split('/').slice(-1);
+static_pages.use(serve(__dirname + `/../build/static/css`));
+app.use(mount("/", static_pages));
+
 app.use(reactrouter({
     App,
-    onError: (ctx, err) => console.log('I Have failed!!!!'),
+    onError: (ctx, err) => console.log('I Have failed!!!!', err),
     onRedirect: (ctx, redirect) => console.log('I have redirected!'),
-    onRender: (ctx) => ({ Container })
+    onRender: (ctx) => ({ 
+        containerRenderer: (view) => (
+            <html lang="en">
+                <head>
+                    <link href={cssFileName} rel="stylesheet" />
+                </head>
+                <body>
+                    <div dangerouslySetInnerHTML={{ __html: view }} >
+                    </div>
+                </body>
+            </html>
+        )
+    })
 }));
 
 // authentication
