@@ -29,7 +29,6 @@ app.use(session(app));
 // app.use(session(app));
 app.use(bodyParser());
 
-const cssFileName = assetManifest.files["main.css"].split('/').slice(-1);
 static_pages.use(serve(__dirname + `/../build/static/css`));
 app.use(mount("/", static_pages));
 
@@ -37,19 +36,7 @@ app.use(reactrouter({
     App,
     onError: (ctx, err) => console.log('I Have failed!!!!', err),
     onRedirect: (ctx, redirect) => console.log('I have redirected!'),
-    onRender: (ctx) => ({ 
-        containerRenderer: (view) => (
-            <html lang="en">
-                <head>
-                    <link href={cssFileName} rel="stylesheet" />
-                </head>
-                <body>
-                    <div dangerouslySetInnerHTML={{ __html: view }} >
-                    </div>
-                </body>
-            </html>
-        )
-    })
+    onRender: (ctx) => ({ Container })
 }));
 
 // authentication
