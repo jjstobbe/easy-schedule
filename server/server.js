@@ -1,4 +1,3 @@
-import React from 'react';
 import Koa from 'koa';
 import reactrouter from 'koa-react-router';
 import App from '../src/App.js';
@@ -11,7 +10,6 @@ import session from 'koa-session';
 import keys from './config/keys.js';
 import setupMongoose from './config/mongoose-setup.js';
 import setupPassport from './config/passport-setup.js';
-import * as assetManifest from '../build/asset-manifest.json';
 const serve = require("koa-static");
 const mount = require("koa-mount");
 
