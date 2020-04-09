@@ -1,13 +1,14 @@
 import Router from 'koa-router';
-import google from 'googleapis';
+import googleapis from 'googleapis';
 import keys from '../config/keys.js';
+const google = googleapis.google;
 const router = new Router();
 
-const authCheck = (ctx, next) => {
+const authCheck = async (ctx, next) => {
     if(!ctx.state.user){
-        ctx.redirect('/auth/login');
+        ctx.redirect('/login');
     } else {
-        next();
+        return next();
     }
 };
 
@@ -27,11 +28,13 @@ router.get('/get-calendars', authCheck, async (ctx) => {
         maxResults: 10,
     });
 
-    return res.data.items;
+    ctx.body = {
+        items: res.data.items
+    };
 });
 
 router.get('/set-primary-calendar', authCheck, async (ctx) => {
-    // Update user in mongo..
+    // Update user in mongo, maybe make another collection for this or something..
 
     console.log({ res1: ctx });
 });
@@ -45,7 +48,7 @@ router.get('/schedule', authCheck, async (ctx) => {
     const oauth2Client = new google.auth.OAuth2(
         keys.google.clientID,
         keys.google.clientSecret,
-        '/auth/login'
+        '/login'
     );
 
     oauth2Client.setCredentials({

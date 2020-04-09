@@ -3,6 +3,7 @@ import bodyParser from 'koa-bodyparser';
 import authRoutes from './routes/auth-routes.js';
 import scheduleRoutes from './routes/schedule-routes.js';
 import serve from 'koa-static';
+import mount from 'koa-mount';
 import passport from 'koa-passport';
 import session from 'koa-session';
 import keys from './config/keys.js';
@@ -20,10 +21,12 @@ setupPassport();
 app.keys = [keys.session.cookieKey];
 app.use(session(app));
 
-// app.use(session(app));
 app.use(bodyParser());
 
-app.use(serve(path.join(path.resolve() + '/build')));
+app.use(mount('/', serve(path.join(path.resolve() + '/build'))));
+app.use(mount('/login', serve(path.join(path.resolve() + '/build'))));
+app.use(mount('/schedule', serve(path.join(path.resolve() + '/build'))));
+app.use(mount('/calendar', serve(path.join(path.resolve() + '/build'))));
 
 // authentication
 app.use(passport.initialize());

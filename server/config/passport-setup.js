@@ -4,11 +4,13 @@ import keys from './keys.js';
 import User from '../models/user-model.js';
 
 export default () => {
-  passport.serializeUser((user, done) => {
+  passport.serializeUser(async (user, done) => {
     done(null, user.id);
   });
   
-  passport.deserializeUser((id, done) => {
+  passport.deserializeUser(async (id, done) => {
+    console.log("Deserializing User: ", id);
+
     User.findById(id, (err, user) => {
         done(null, user);
     });
@@ -21,7 +23,7 @@ export default () => {
         clientSecret: keys.google.clientSecret,
         callbackURL: '/auth/google/redirect',
       },
-      (accessToken, refreshToken, profile, done) => {
+      (_, refreshToken, profile, done) => {
         User.findOne({ googleId: profile.id }).then((currentUser) => {
           if (currentUser) {
             done(null, currentUser);
