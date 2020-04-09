@@ -4,7 +4,7 @@ import './index.css';
 const Schedule = () => {
   return (
     <div>
-      Schedule
+      Some Schedule Component
     </div>
   );
 }
