@@ -1,0 +1,31 @@
+.calendar {
+  display: flex;
+  align-items: center;
+
+  width: 20rem;
+  height: 1rem;
+  border-radius: 5px;
+
+  padding: 1.5rem;
+  margin: 2rem;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: 0.2s ease;
+}
+
+.calendar:hover {
+  opacity: 1;
+  transition: 0.2s ease;
+}
+
+.calendar-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+  width: 100vw;
+  height: 100vh;
+
+  margin-top: 10rem;
+}

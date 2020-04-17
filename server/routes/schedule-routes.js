@@ -6,7 +6,8 @@ const router = new Router();
 
 const authCheck = async (ctx, next) => {
     if(!ctx.state.user){
-        ctx.redirect('/login');
+        ctx.status = 403;
+        return;
     } else {
         return next();
     }
@@ -28,15 +29,22 @@ router.get('/get-calendars', authCheck, async (ctx) => {
         maxResults: 10,
     });
 
+    const calendars = res.data.items;
+    
+    // Don't want users selecting public calendars. They must own the calendar.
+    const ownedCalendars = calendars.filter(c => c.accessRole === 'owner');
+
     ctx.body = {
-        items: res.data.items
+        items: ownedCalendars
     };
 });
 
-router.get('/set-primary-calendar', authCheck, async (ctx) => {
-    // Update user in mongo, maybe make another collection for this or something..
+router.post('/set-primary-calendar', authCheck, async (ctx) => {
+    if (!ctx.request.query.selectedCalendarId) {
+        ctx.throw(400, 'Query parameter "selectedCalendarId" was not provided.');
+    }
 
-    console.log({ res1: ctx });
+    console.log("TODO: Update user's selectedCalendarId to ", ctx.request.query.selectedCalendarId);
 });
 
 router.get('/schedule', authCheck, async (ctx) => {

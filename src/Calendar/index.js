@@ -6,6 +6,14 @@ import './index.css';
 const Calendar = () => {
   const [calendars, loading] = useFetch('/get-calendars');
 
+  const onCalendarClick = (calendar) => {
+    console.log({ selectedCalendar: calendar });
+    fetch(`/set-primary-calendar?selectedCalendar=${calendar.id}`,
+    {
+      method: 'POST',
+    });
+  }
+
   console.log({ calendars, loading });
 
   return (
@@ -16,13 +24,21 @@ const Calendar = () => {
       {!loading && !calendars && <Redirect to='login' />}
 
       {!loading && calendars && (
-        <div className="calendars-container">
+        <div className="calendar-form-container">
           <h2>Select Primary Calendar</h2>
-          {calendars.items.map((calendar) => (
-            <div>
-              {calendar.summary}
-            </div>
-          ))}
+
+          <div className="calendars-container">
+            {calendars.items.map((calendar) => (
+              <div
+                className="calendar"
+                style={{ backgroundColor: calendar.backgroundColor, color: calendar.foregroundColor }}
+                key={calendar.id}
+                onClick={() => onCalendarClick(calendar)}
+              >
+                {calendar.summary}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

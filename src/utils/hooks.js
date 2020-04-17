@@ -8,7 +8,7 @@ const useFetch = (url) => {
     const response = await fetch(url);
 
     // Unauthorized, return null
-    if (response.redirected) {
+    if (response.status === 403) {
       setData(null);
     } else {
       const json = await response.json();

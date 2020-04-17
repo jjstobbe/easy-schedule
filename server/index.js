@@ -39,7 +39,7 @@ app.use(scheduleRoutes.routes());
 app.use(scheduleRoutes.allowedMethods());
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, function () {
     console.log('==> 🌎  Listening on port %s. Visit http://localhost:%s/', PORT, PORT);
