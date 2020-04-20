@@ -18,8 +18,12 @@ router.get('/auth/google', passport.authenticate('google', {
 // callback route for google to redirect to
 // hand control to passport to use code to grab profile info
 router.get('/auth/google/redirect', passport.authenticate('google'), (ctx) => {
-    // If calendars don't exist, go to calendar. If they do, then just go to schedule
-    ctx.redirect('/calendar')
+    if (ctx.state.user.primaryCalendarId) {
+        ctx.redirect('/schedule');
+    } else {
+        // If their primaryCalendarId doesn't exist, then they need to set one
+        ctx.redirect('/calendar');
+    }
 });
 
 export default router;

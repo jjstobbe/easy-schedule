@@ -1,27 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFetch } from '../utils/hooks';
 import { Redirect } from 'react-router-dom';
 import './index.css';
 
 const Calendar = () => {
   const [calendars, loading] = useFetch('/get-calendars');
+  const [redirect, setRedirect] = useState('');
 
-  const onCalendarClick = (calendar) => {
-    console.log({ selectedCalendar: calendar });
-    fetch(`/set-primary-calendar?selectedCalendar=${calendar.id}`,
+  const onCalendarClick = async (calendar) => {
+    const response = await fetch(`/set-primary-calendar?selectedCalendarId=${calendar.id}`,
     {
       method: 'POST',
     });
+
+    if (response.status === 200) {
+      setRedirect('schedule');
+    }
   }
 
-  console.log({ calendars, loading });
+  if (!loading && !calendars) {
+    return <Redirect to='login' />;
+  }
+  if (redirect) {
+    return <Redirect to={redirect} />;
+  }
 
   return (
     <div>
       {loading && <div> Loading </div>}
-
-      {/* Feels a bit stupid to do redirects like this, but a better solution isn't coming to mind right now */}
-      {!loading && !calendars && <Redirect to='login' />}
 
       {!loading && calendars && (
         <div className="calendar-form-container">
@@ -39,6 +45,7 @@ const Calendar = () => {
               </div>
             ))}
           </div>
+          
         </div>
       )}
     </div>

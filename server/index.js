@@ -2,6 +2,7 @@ import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import authRoutes from './routes/auth-routes.js';
 import scheduleRoutes from './routes/schedule-routes.js';
+import taskRoutes from './routes/task-routes.js';
 import serve from 'koa-static';
 import mount from 'koa-mount';
 import passport from 'koa-passport';
@@ -37,6 +38,8 @@ app.use(authRoutes.routes());
 app.use(authRoutes.allowedMethods());
 app.use(scheduleRoutes.routes());
 app.use(scheduleRoutes.allowedMethods());
+app.use(taskRoutes.routes());
+app.use(taskRoutes.allowedMethods());
 
 
 const PORT = process.env.PORT || 3001;

@@ -1,12 +1,13 @@
 import Router from 'koa-router';
 import googleapis from 'googleapis';
 import keys from '../config/keys.js';
+import User from '../models/user-model.js';
 const google = googleapis.google;
 const router = new Router();
 
 const authCheck = async (ctx, next) => {
     if(!ctx.state.user){
-        ctx.status = 403;
+        ctx.response.status = 403;
         return;
     } else {
         return next();
@@ -44,9 +45,14 @@ router.post('/set-primary-calendar', authCheck, async (ctx) => {
         ctx.throw(400, 'Query parameter "selectedCalendarId" was not provided.');
     }
 
-    console.log("TODO: Update user's selectedCalendarId to ", ctx.request.query.selectedCalendarId);
+    const user = await User.findById(ctx.state.user.id);
+    user.primaryCalendarId = ctx.request.query.selectedCalendarId;
+    await user.save();
+
+    ctx.response.status = 200;
 });
 
+// TODO: convert this into an endpoint that schedules your day or whatever. Maybe that happens on task creation, hmm.
 router.get('/schedule', authCheck, async (ctx) => {
     if (!ctx.state.user.primaryCalendarId) {
         ctx.redirect('/set-primary-calendar');
